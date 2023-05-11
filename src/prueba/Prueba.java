@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.sql.*;
 import java.util.*;
 import com.google.gson.*;
+import java.io.BufferedWriter;
 
 public class Prueba {
 
@@ -84,12 +85,17 @@ public void exportTableToJson(String tableName, String fileName) throws SQLExcep
     String json = gson.toJson(tableData);
 
     // Escribir el JSON a un archivo
-    try (Writer writer = new FileWriter(fileName)) {
-        gson.toJson(tableData, writer);
+    // Escribir el JSON a un archivo con salto de línea por fila
+try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+    for (Map<String, Object> rowData : tableData) {
+        String rowJson = gson.toJson(rowData);
+        writer.write(rowJson);
+        writer.newLine();
     }
+}
 
-    // Imprimir el número de filas exportadas
-    int rowCount = tableData.size() - 1;
-    System.out.println("Exportando " + rowCount + " filas a JSON...");
+// Imprimir el número de filas exportadas
+int rowCount = tableData.size() - 1;
+System.out.println("Exportando " + rowCount + " filas a JSON con salto de línea por fila...");
 }
 }
